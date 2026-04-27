@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Persona } from './persona';
+import { Persona } from './persona.model'; // <-- Actualizado
 
 @Injectable({
   providedIn: 'root'
@@ -16,4 +16,10 @@ export class PersonaService {
   getPersonas(): Observable<Persona[]> {
     return this.http.get<Persona[]>(this.url);
   }
+  
+  // Añade esta función a tu clase PersonaService
+  crearPersona(persona: Persona) {
+    return this.http.post<Persona>('http://localhost:8080/api/personas', persona);
+  }
+
 }

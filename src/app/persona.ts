@@ -1,6 +1,6 @@
-export interface Persona {
-    id?: number;
-    nombre: string;
-    apellido: string;
-    email: string;
-}
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class Persona {}
