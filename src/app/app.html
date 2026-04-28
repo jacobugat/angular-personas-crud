@@ -2,7 +2,10 @@
   <h2 style="color: #2c3e50;">Gestión de Personas</h2>
 
   <div style="background: #fdfdfd; padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-    <h4 style="margin-top: 0;">Agregar Nuevo Usuario</h4>
+    <h4 style="margin-top: 0;">
+      {{ editando ? '✏️ Editando a: ' + nuevaPersona.nombre : '➕ Agregar Nuevo Usuario' }}
+    </h4>
+    
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
       <input type="text" [(ngModel)]="nuevaPersona.nombre" placeholder="Nombre" style="padding: 10px; flex: 1; border: 1px solid #ccc; border-radius: 4px;">
       <input type="text" [(ngModel)]="nuevaPersona.apellido" placeholder="Apellido" style="padding: 10px; flex: 1; border: 1px solid #ccc; border-radius: 4px;">
@@ -12,8 +15,14 @@
               [disabled]="!nuevaPersona.nombre || !nuevaPersona.email"
               [style.opacity]="(!nuevaPersona.nombre || !nuevaPersona.email) ? 0.5 : 1"
               [style.cursor]="(!nuevaPersona.nombre || !nuevaPersona.email) ? 'not-allowed' : 'pointer'"
-              style="background: #27ae60; color: white; border: none; padding: 10px 25px; border-radius: 4px; font-weight: bold; transition: 0.3s;">
-        Guardar
+              [style.background]="editando ? '#f39c12' : '#27ae60'"
+              style="color: white; border: none; padding: 10px 25px; border-radius: 4px; font-weight: bold; transition: 0.3s;">
+        {{ editando ? 'Actualizar' : 'Guardar' }}
+      </button>
+
+      <button *ngIf="editando" (click)="finalizarAccion('Edición cancelada')" 
+              style="background: #95a5a6; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;">
+        Cancelar
       </button>
     </div>
   </div>

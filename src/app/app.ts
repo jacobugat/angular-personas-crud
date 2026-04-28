@@ -1,22 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // <--- IMPORTANTE
+import { FormsModule } from '@angular/forms';
 import { PersonaService } from './persona.service';
 import { Persona } from './persona.model';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule], // <--- AGREGAR AQUÍ
+  imports: [CommonModule, FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class AppComponent implements OnInit {
   personas: Persona[] = [];
   personasFiltradas: Persona[] = [];
-  
-  // Objeto para el formulario
   nuevaPersona: Persona = { nombre: '', apellido: '', email: '' };
+  editando: boolean = false;
 
   constructor(private personaService: PersonaService) {}
 
@@ -30,25 +29,43 @@ export class AppComponent implements OnInit {
         this.personas = data;
         this.personasFiltradas = data;
       },
-      error: (err) => console.error('Error al cargar:', err)
+      error: (err) => console.error('Error al cargar personas:', err)
     });
   }
 
-  // Función para guardar
   guardarPersona() {
-    if (!this.nuevaPersona.nombre || !this.nuevaPersona.email) {
-      alert('Por favor, llena al menos el nombre y el email.');
-      return;
+    if (this.editando) {
+      this.personaService.actualizarPersona(this.nuevaPersona).subscribe({
+        next: () => this.finalizarAccion('¡Persona actualizada con éxito!'),
+        error: (err) => console.error('Error al actualizar:', err)
+      });
+    } else {
+      this.personaService.crearPersona(this.nuevaPersona).subscribe({
+        next: () => this.finalizarAccion('¡Persona creada con éxito!'),
+        error: (err) => console.error('Error al crear:', err)
+      });
     }
+  }
 
-    this.personaService.crearPersona(this.nuevaPersona).subscribe({
-      next: (personaGuardada) => {
-        console.log('Guardado con éxito:', personaGuardada);
-        this.cargarPersonas(); // <--- Esto refresca la tabla automáticamente
-        this.nuevaPersona = { nombre: '', apellido: '', email: '' }; // Limpia el formulario
-      },
-      error: (err) => console.error('Error al guardar:', err)
-    });
+  editar(persona: Persona) {
+    this.editando = true;
+    this.nuevaPersona = { ...persona };
+  }
+
+  eliminar(id?: number) {
+    if (id && confirm('¿Estás seguro de eliminar este registro?')) {
+      this.personaService.eliminarPersona(id).subscribe({
+        next: () => this.cargarPersonas(),
+        error: (err) => console.error('Error al eliminar:', err)
+      });
+    }
+  }
+
+  finalizarAccion(mensaje: string) {
+    alert(mensaje);
+    this.cargarPersonas();
+    this.nuevaPersona = { nombre: '', apellido: '', email: '' };
+    this.editando = false;
   }
 
   buscar(event: any) {
@@ -58,7 +75,4 @@ export class AppComponent implements OnInit {
       p.apellido.toLowerCase().includes(valor)
     );
   }
-
-  editar(p: Persona) { /* lógica de editar */ }
-  eliminar(id?: number) { /* lógica de eliminar */ }
-}
+} // <--- ESTA ES LA LLAVE QUE CIERRA LA CLASE. TODO DEBE ESTAR ARRIBA DE ESTA.
