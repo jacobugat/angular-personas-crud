@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router'; 
+import { CommonModule } from '@angular/common'; // Agregamos esta línea
 import { FormsModule } from '@angular/forms';
 import { PersonaService } from './persona.service';
 import { Persona } from './persona.model';
@@ -7,7 +8,8 @@ import { Persona } from './persona.model';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  // IMPORTANTE: Solo un "imports" con todo adentro separado por comas
+  imports: [RouterOutlet, CommonModule, FormsModule], 
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -75,4 +77,4 @@ export class AppComponent implements OnInit {
       p.apellido.toLowerCase().includes(valor)
     );
   }
-} // <--- ESTA ES LA LLAVE QUE CIERRA LA CLASE. TODO DEBE ESTAR ARRIBA DE ESTA.
+}

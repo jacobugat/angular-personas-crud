@@ -1,0 +1,28 @@
+<div class="login-container">
+  <h2>Iniciar Sesión</h2>
+
+  <!-- PASO 1: USUARIO -->
+  <div *ngIf="pasoActual === 1" class="form-group">
+    <label>Usuario</label>
+    <input type="text" [(ngModel)]="username" placeholder="Escribe tu usuario" class="form-control">
+    <button (click)="irAPassword()" class="btn-next">Siguiente</button>
+  </div>
+
+  <!-- PASO 2: CONTRASEÑA -->
+  <div *ngIf="pasoActual === 2" class="form-group">
+    <p>Hola, <b>{{username}}</b></p>
+    <label>Contraseña</label>
+    <input type="password" [(ngModel)]="password" placeholder="Tu clave" class="form-control">
+    <button (click)="ejecutarLogin()" class="btn-next">Ingresar</button>
+  </div>
+
+  <!-- PASO 3: MFA (Authenticator) -->
+  <div *ngIf="pasoActual === 3" class="form-group">
+    <label>Código de Seguridad</label>
+    <p>Ingresa el código de 6 dígitos de tu app Authenticator</p>
+    <input type="number" [(ngModel)]="codigoMfa" placeholder="000000" class="form-control">
+    <button (click)="verificarMfa()" class="btn-next">Validar</button>
+  </div>
+
+  <p *ngIf="mensajeError" style="color: red; margin-top: 10px;">{{mensajeError}}</p>
+</div>
