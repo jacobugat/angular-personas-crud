@@ -33,14 +33,16 @@ export class LoginComponent {
     const datos = { username: this.username, password: this.password };
     
     this.authService.login(datos).subscribe({
-      next: (res: any) => { // Agregamos :any para quitar el error TS7006
+      next: (res: any) => {
         if (res.status === 'MFA_REQUIRED') {
           this.pasoActual = 3;
+          this.mensajeError = '';
         } else if (res.status === 'SUCCESS') {
-          this.router.navigate(['/dashboard']);
+          // Si no pide MFA, va directo al listado
+          this.router.navigate(['/personas']);
         }
       },
-      error: (err: any) => { // Agregamos :any
+      error: (err: any) => {
         this.mensajeError = 'Credenciales inválidas. Intenta de nuevo.';
       }
     });
@@ -49,13 +51,19 @@ export class LoginComponent {
   verificarMfa() {
     if (this.codigoMfa) {
       this.authService.verificarMFA(this.username, this.codigoMfa).subscribe({
-        next: (res: any) => { // Agregamos :any
-          alert('¡Acceso concedido!');
+        next: (res: any) => {
+          // El AuthService ya guardó el token gracias al 'tap' que pusimos antes
+          console.log('Token validado correctamente');
+          
+          // Cambiamos el alert por la navegación automática
+          this.router.navigate(['/personas']); 
         },
-        error: (err: any) => { // Agregamos :any
+        error: (err: any) => {
           this.mensajeError = 'Código incorrecto o expirado';
         }
       });
+    } else {
+      this.mensajeError = 'Por favor, ingresa el código de 6 dígitos';
     }
   }
 }

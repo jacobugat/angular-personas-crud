@@ -1,23 +1,39 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // La URL de tu API de Java
-  private API_URL = 'http://localhost:8080/api/auth';
+  private apiUrl = 'http://localhost:8080/api/auth';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  // PASO 1 y 2: Enviar Usuario y Contraseña
   login(credentials: any): Observable<any> {
-    return this.http.post(`${this.API_URL}/login`, credentials);
+    return this.http.post(`${this.apiUrl}/login`, credentials);
   }
 
-  // PASO 3: Validar el código del celular
+  // Este es el método que guarda el "carnet" automáticamente
   verificarMFA(username: string, codigo: number): Observable<any> {
-    return this.http.get(`${this.API_URL}/validar-mfa/${username}/${codigo}`);
+  return this.http.get(`${this.apiUrl}/validar-mfa/${username}/${codigo}`).pipe(
+    tap((res: any) => {
+      console.log('Respuesta recibida:', res);
+      
+      // Cambiamos 'mensaje' por 'message' para que coincida con tu captura
+      if (res.status === 'SUCCESS' && res.message) { 
+        localStorage.setItem('token', res.message);
+        console.log('¡TOKEN GUARDADO!');
+      }
+    })
+  );
+}
+
+  getToken() {
+    return localStorage.getItem('token');
+  }
+
+  logout() {
+    localStorage.removeItem('token');
   }
 }
