@@ -1,1 +1,7 @@
+<!-- Si el usuario está logueado, mostramos la lista -->
+<div *ngIf="authService.isLoggedIn()">
+  <app-persona-lista></app-persona-lista>
+</div>
+
+<!-- El RouterOutlet se queda para la navegación -->
 <router-outlet></router-outlet>

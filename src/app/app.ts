@@ -2,42 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PersonaService } from './persona.service';
-import { Persona } from './persona.model';
+// Importa tu nuevo componente aquí:
+import { PersonaListaComponent } from './persona-lista.component'; 
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule], 
+  // AGREGA PersonaListaComponent a la lista de imports
+  imports: [RouterOutlet, CommonModule, FormsModule, PersonaListaComponent], 
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class AppComponent implements OnInit {
-  personas: Persona[] = [];
-  personasFiltradas: Persona[] = [];
-  nuevaPersona: Persona = { nombre: '', apellido: '', email: '' };
-  editando: boolean = false;
 
-  constructor(private personaService: PersonaService) {}
+  constructor(public authService: AuthService) {}
 
   ngOnInit() {
-    this.cargarPersonas();
+    // Aquí puedes dejar lógica global, como verificar si el usuario está logueado
   }
 
-  cargarPersonas() {
-    this.personaService.getPersonas().subscribe({
-      next: (data) => {
-        this.personas = data;
-        this.personasFiltradas = data;
-      },
-      error: (err) => console.error('Error al cargar personas:', err)
-    });
-  }
-
-  // ... (aquí va el resto de tus funciones de guardar, editar, etc. que ya tenías)
-  guardarPersona() { /* tu codigo */ }
-  editar(p: Persona) { /* tu codigo */ }
-  eliminar(id?: number) { /* tu codigo */ }
-  finalizarAccion(m: string) { /* tu codigo */ }
-  buscar(e: any) { /* tu codigo */ }
+  // TODA LA LÓGICA DE PERSONAS QUE ESTABA AQUÍ SE BORRA 
+  // PORQUE YA VIVE EN persona-lista.component.ts
 }
