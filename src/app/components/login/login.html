@@ -16,13 +16,5 @@
     <button (click)="ejecutarLogin()" class="btn-next">Ingresar</button>
   </div>
 
-  <!-- PASO 3: MFA (Authenticator) -->
-  <div *ngIf="pasoActual === 3" class="form-group">
-    <label>Código de Seguridad</label>
-    <p>Ingresa el código de 6 dígitos de tu app Authenticator</p>
-    <input type="number" [(ngModel)]="codigoMfa" placeholder="000000" class="form-control">
-    <button (click)="verificarMfa()" class="btn-next">Validar</button>
-  </div>
-
   <p *ngIf="mensajeError" style="color: red; margin-top: 10px;">{{mensajeError}}</p>
 </div>

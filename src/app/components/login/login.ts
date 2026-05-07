@@ -15,7 +15,6 @@ export class LoginComponent {
   pasoActual: number = 1; 
   username: string = '';
   password: string = '';
-  codigoMfa: number | null = null;
   mensajeError: string = '';
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -34,36 +33,16 @@ export class LoginComponent {
     
     this.authService.login(datos).subscribe({
       next: (res: any) => {
-        if (res.status === 'MFA_REQUIRED') {
-          this.pasoActual = 3;
-          this.mensajeError = '';
-        } else if (res.status === 'SUCCESS') {
-          // Si no pide MFA, va directo al listado
+        if (res.status === 'SUCCESS') {
+          // Login exitoso → navegar directo
           this.router.navigate(['/personas']);
+        } else {
+          this.mensajeError = 'Credenciales inválidas. Intenta de nuevo.';
         }
       },
-      error: (err: any) => {
+      error: () => {
         this.mensajeError = 'Credenciales inválidas. Intenta de nuevo.';
       }
     });
-  }
-
-  verificarMfa() {
-    if (this.codigoMfa) {
-      this.authService.verificarMFA(this.username, this.codigoMfa).subscribe({
-        next: (res: any) => {
-          // El AuthService ya guardó el token gracias al 'tap' que pusimos antes
-          console.log('Token validado correctamente');
-          
-          // Cambiamos el alert por la navegación automática
-          this.router.navigate(['/personas']); 
-        },
-        error: (err: any) => {
-          this.mensajeError = 'Código incorrecto o expirado';
-        }
-      });
-    } else {
-      this.mensajeError = 'Por favor, ingresa el código de 6 dígitos';
-    }
   }
 }

@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-// Importa tu nuevo componente aquí:
-import { PersonaListaComponent } from './persona-lista.component'; 
+import { FormsModule } from '@angular/forms'; 
 import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   // AGREGA PersonaListaComponent a la lista de imports
-  imports: [RouterOutlet, CommonModule, FormsModule, PersonaListaComponent], 
+  imports: [RouterOutlet, CommonModule, FormsModule], 
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
