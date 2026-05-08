@@ -12,8 +12,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     
     // Al ser una función interceptora, usamos withInterceptors
-    provideHttpClient(
-      withInterceptors([authInterceptor])
-    )
+    provideHttpClient(withInterceptors([authInterceptor]))
   ]
 };

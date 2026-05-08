@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { AuthService, AuthResponse } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -30,18 +30,22 @@ export class LoginComponent {
 
   ejecutarLogin() {
     const datos = { username: this.username, password: this.password };
-    
+    this.mensajeError = '';
+
     this.authService.login(datos).subscribe({
-      next: (res: any) => {
-        if (res.status === 'SUCCESS') {
-          // Login exitoso → navegar directo
+      next: (res: AuthResponse) => {
+        // Si el servidor responde con un token, el 'tap' del servicio ya lo guardó
+        if (res && res.token) {
+          console.log('Login exitoso, redirigiendo a personas...');
           this.router.navigate(['/personas']);
         } else {
-          this.mensajeError = 'Credenciales inválidas. Intenta de nuevo.';
+          this.mensajeError = 'El servidor no devolvió un token de acceso.';
         }
       },
-      error: () => {
-        this.mensajeError = 'Credenciales inválidas. Intenta de nuevo.';
+      
+      error: (err) => {
+        console.error('Error en la petición:', err);
+        this.mensajeError = 'Usuario o contraseña incorrectos.';
       }
     });
   }

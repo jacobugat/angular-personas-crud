@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, tap } from 'rxjs';
 
+// Interfaz definida aquí mismo para evitar errores de importación
+export interface AuthResponse {
+  token: string;
+  username: string;
+  status: string;
+  message?: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -10,15 +16,20 @@ import { tap } from 'rxjs/operators';
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  // Login directo con usuario y contraseña
-  login(credentials: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
-      tap((res: any) => {
-        if (res.status === 'SUCCESS' && res.message) {
-          localStorage.setItem('token', res.message);
-          console.log('¡TOKEN GUARDADO EXITOSAMENTE!');
+  login(creds: any): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, creds).pipe(
+      tap((res: AuthResponse) => {
+        console.log("Respuesta completa del servidor:", res);
+        
+        // Verificamos si existe el token en la respuesta
+        if (res && res.token) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('username', res.username);
+          console.log("¡TOKEN GUARDADO EXITOSAMENTE EN LOCALSTORAGE!");
+        } else {
+          console.error("EL SERVIDOR NO ENVIÓ TOKEN. Revisa el backend.");
         }
       })
     );
@@ -34,6 +45,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
-    console.log('Sesión cerrada y token eliminado.');
+    localStorage.removeItem('username');
+    console.log('Sesión cerrada.');
   }
 }
