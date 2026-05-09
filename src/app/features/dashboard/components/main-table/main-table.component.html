@@ -1,0 +1,59 @@
+<div class="container mt-4">
+  <div class="mb-3">
+    <input 
+      type="text" 
+      class="form-control" 
+      placeholder="Buscar..." 
+      (input)="buscar($event)"
+    >
+  </div>
+
+  <table class="table table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Email</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of resourcesFiltrados">
+        <td>{{ item.nombre }}</td>
+        <td>{{ item.apellido }}</td>
+        <td>{{ item.email }}</td>
+        <td>
+          <button class="btn btn-primary btn-sm me-2" (click)="prepararEdicion(item)">
+            Editar
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="eliminar(item.id)">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card p-4 mt-4">
+    <h3>{{ editando ? 'Actualizar Registro' : 'Nuevo Registro' }}</h3>
+    <div class="row g-3">
+      <div class="col">
+        <input type="text" [(ngModel)]="currentResource.nombre" class="form-control" placeholder="Nombre">
+      </div>
+      <div class="col">
+        <input type="text" [(ngModel)]="currentResource.apellido" class="form-control" placeholder="Apellido">
+      </div>
+      <div class="col">
+        <input type="text" [(ngModel)]="currentResource.email" class="form-control" placeholder="Email">
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-success" (click)="guardar()">
+          {{ editando ? 'Actualizar' : 'Guardar' }}
+        </button>
+        <button *ngIf="editando" class="btn btn-secondary ms-2" (click)="finalizarAccion('Cancelado')">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

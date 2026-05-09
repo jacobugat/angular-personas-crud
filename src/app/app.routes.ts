@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { PersonaListaComponent } from './persona-lista.component';
-import { LoginComponent } from './components/login/login';
+import { MainTableComponent } from './features/dashboard/components/main-table/main-table.component';
+import { LoginComponent } from './features/auth/login/login.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'personas', component: PersonaListaComponent },
+  { path: 'dashboard', component: MainTableComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];

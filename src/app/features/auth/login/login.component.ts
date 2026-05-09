@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService, AuthResponse } from '../../services/auth.service';
+import { AuthService, AuthResponse } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './login.html',
-  styleUrl: './login.css'
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css'
 })
 export class LoginComponent {
   pasoActual: number = 1; 
@@ -34,10 +34,9 @@ export class LoginComponent {
 
     this.authService.login(datos).subscribe({
       next: (res: AuthResponse) => {
-        // Si el servidor responde con un token, el 'tap' del servicio ya lo guardó
         if (res && res.token) {
-          console.log('Login exitoso, redirigiendo a personas...');
-          this.router.navigate(['/personas']);
+          console.log('Login exitoso, redirigiendo al dashboard...');
+          this.router.navigate(['/dashboard']);
         } else {
           this.mensajeError = 'El servidor no devolvió un token de acceso.';
         }
