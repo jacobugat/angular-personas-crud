@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>
+  {{ isSetupMode ? 'Configurar autenticador' : 'Verificar autenticador' }}
+</h2>
+
+<mat-dialog-content class="mfa-content">
+  <p class="mfa-text" *ngIf="isSetupMode">
+    Escanea este codigo con Google Authenticator y luego escribe el codigo de 6 digitos.
+  </p>
+
+  <p class="mfa-text" *ngIf="!isSetupMode">
+    Escribe el codigo de 6 digitos de tu aplicacion de autenticacion.
+  </p>
+
+  <div class="qr-box" *ngIf="qrCodeDataUrl">
+    <img [src]="qrCodeDataUrl" alt="Codigo QR para Google Authenticator">
+  </div>
+
+  <div class="manual-box" *ngIf="isSetupMode && qrUrl">
+    {{ qrUrl }}
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Codigo de verificacion</mat-label>
+    <input
+      matInput
+      inputmode="numeric"
+      maxlength="6"
+      [(ngModel)]="verificationCode"
+      (keyup.enter)="confirmarMfa()">
+  </mat-form-field>
+
+  <mat-error *ngIf="mensajeError">{{ mensajeError }}</mat-error>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="confirmarMfa()">
+    Verificar
+  </button>
+</mat-dialog-actions>

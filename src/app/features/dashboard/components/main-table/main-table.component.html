@@ -1,59 +1,451 @@
-<div class="container mt-4">
-  <div class="mb-3">
-    <input 
-      type="text" 
-      class="form-control" 
-      placeholder="Buscar..." 
-      (input)="buscar($event)"
-    >
-  </div>
-
-  <table class="table table-hover">
-    <thead class="table-dark">
-      <tr>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>Email</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of resourcesFiltrados">
-        <td>{{ item.nombre }}</td>
-        <td>{{ item.apellido }}</td>
-        <td>{{ item.email }}</td>
-        <td>
-          <button class="btn btn-primary btn-sm me-2" (click)="prepararEdicion(item)">
-            Editar
-          </button>
-          <button class="btn btn-danger btn-sm" (click)="eliminar(item.id)">
-            Eliminar
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="card p-4 mt-4">
-    <h3>{{ editando ? 'Actualizar Registro' : 'Nuevo Registro' }}</h3>
-    <div class="row g-3">
-      <div class="col">
-        <input type="text" [(ngModel)]="currentResource.nombre" class="form-control" placeholder="Nombre">
-      </div>
-      <div class="col">
-        <input type="text" [(ngModel)]="currentResource.apellido" class="form-control" placeholder="Apellido">
-      </div>
-      <div class="col">
-        <input type="text" [(ngModel)]="currentResource.email" class="form-control" placeholder="Email">
-      </div>
-      <div class="col-auto">
-        <button class="btn btn-success" (click)="guardar()">
-          {{ editando ? 'Actualizar' : 'Guardar' }}
-        </button>
-        <button *ngIf="editando" class="btn btn-secondary ms-2" (click)="finalizarAccion('Cancelado')">
-          Cancelar
-        </button>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand-block">
+      <div class="brand-mark">GI</div>
+      <div>
+        <strong>Gestion Inmobiliaria</strong>
+        <span>Panel interno</span>
       </div>
     </div>
+
+    <nav class="side-nav" aria-label="Secciones principales">
+      <button class="nav-item active" type="button">
+        <mat-icon>groups</mat-icon>
+        <span>Personas</span>
+      </button>
+      <button class="nav-item" type="button">
+        <mat-icon>home_work</mat-icon>
+        <span>Propiedades</span>
+      </button>
+      <button class="nav-item" type="button" (click)="abrirVisitas()">
+        <mat-icon>event</mat-icon>
+        <span>Visitas</span>
+      </button>
+      <button class="nav-item" type="button">
+        <mat-icon>description</mat-icon>
+        <span>Contratos</span>
+      </button>
+    </nav>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Base comercial</p>
+        <h1>Clientes y propietarios</h1>
+      </div>
+      <button mat-icon-button class="logout-button" aria-label="Cerrar sesion" (click)="cerrarSesion()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </header>
+
+    <section class="metric-grid" aria-label="Resumen">
+      <article class="metric-card">
+        <span class="metric-label">Registros</span>
+        <strong>{{ resources.length }}</strong>
+        <small>Personas activas</small>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">Con filtro</span>
+        <strong>{{ resourcesFiltrados.length }}</strong>
+        <small>Coincidencias actuales</small>
+      </article>
+      <article class="metric-card status-card">
+        <span class="metric-label">Datos</span>
+        <strong>{{ resources.length }}</strong>
+        <small>Autorizacion y contacto</small>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <div class="list-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Directorio</p>
+            <h2>Personas registradas</h2>
+          </div>
+          <span class="status-pill">Disponible</span>
+        </div>
+
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar por nombre, cedula, WhatsApp o red social</mat-label>
+          <input matInput (input)="buscar($event)" placeholder="Ej: V-19900331">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div class="people-list">
+          <div class="person-row header-row">
+            <span>Nombre</span>
+            <span>Apellido</span>
+            <span>Cedula</span>
+            <span>WhatsApp</span>
+            <span>Estado</span>
+          </div>
+
+          <article class="person-record" *ngFor="let item of resourcesFiltrados">
+            <div class="person-row summary-row">
+              <div class="person-name">
+                <span class="avatar">{{ iniciales(item) }}</span>
+                <div>
+                  <strong>{{ item.nombre }}</strong>
+                  <small>{{ item.agenteVendedor || 'Sin agente asignado' }}</small>
+                </div>
+              </div>
+              <span>{{ item.apellido }}</span>
+              <span>{{ cedulaCompleta(item) }}</span>
+              <a class="whatsapp-link" [href]="whatsappUrl(item.whatsapp)" target="_blank" rel="noopener noreferrer">
+                <span class="brand-icon whatsapp">W</span>
+                {{ item.whatsapp || 'Sin WhatsApp' }}
+              </a>
+              <div class="row-actions">
+                <span class="status-dot" [ngClass]="estadoClase(item)" [title]="estadoTexto(item.estadoCliente)"></span>
+                <button mat-icon-button class="expand-button" type="button" (click)="toggleDetalle(item)">
+                  <mat-icon>{{ expandedId === item.id ? 'expand_less' : 'keyboard_arrow_right' }}</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="detail-panel" *ngIf="expandedId === item.id">
+              <ng-container *ngIf="editingId !== item.id; else editTemplate">
+                <div class="detail-actions">
+                  <button mat-icon-button class="edit-button" aria-label="Editar registro" (click)="iniciarEdicion(item)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button class="delete-button" aria-label="Eliminar registro" (click)="eliminar(item.id)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+
+                <div class="detail-grid">
+                  <section class="detail-section commercial-section">
+                    <h3>Seguimiento comercial</h3>
+                    <div class="status-selector readonly-status">
+                      <span [class.active]="item.estadoCliente === 'NO_COMPRO'" class="stage no-compro">No compro</span>
+                      <span [class.active]="item.estadoCliente === 'CITA'" class="stage cita">Esta en cita</span>
+                      <span [class.active]="item.estadoCliente === 'COMPRO'" class="stage compro">Si compro</span>
+                    </div>
+                    <p><span>Nombre del agente vendedor:</span> {{ item.agenteVendedor || 'Sin agente asignado' }}</p>
+                    <p><span>Cita programada:</span> {{ fechaCitaLegible(item.fechaCita) }}</p>
+                    <p><span>Interesado:</span> {{ item.interesado || 'Sin interes registrado' }}</p>
+                  </section>
+
+                  <section class="detail-section">
+                    <h3>Identificacion</h3>
+                    <p><span>Nombre:</span> {{ item.nombre }}</p>
+                    <p><span>Apellido:</span> {{ item.apellido }}</p>
+                    <p><span>Cedula:</span> {{ cedulaCompleta(item) }}</p>
+                    <p><span>RIF:</span> {{ item.rif || 'Sin RIF' }}</p>
+                  </section>
+
+                  <section class="detail-section">
+                    <h3>Contactos</h3>
+                    <a class="contact-line" [href]="whatsappUrl(item.whatsapp)" target="_blank" rel="noopener noreferrer">
+                      <span class="brand-icon whatsapp">W</span>{{ item.whatsapp || 'Sin WhatsApp' }}
+                    </a>
+                    <button class="contact-line link-button" type="button" (click)="abrirUrl(item.tiktok)">
+                      <span class="brand-icon tiktok">Tk</span>{{ item.tiktok || 'Sin TikTok' }}
+                    </button>
+                    <button class="contact-line link-button" type="button" (click)="abrirUrl(item.instagram)">
+                      <span class="brand-icon instagram">Ig</span>{{ item.instagram || 'Sin Instagram' }}
+                    </button>
+                    <button class="contact-line link-button" type="button" (click)="abrirUrl(item.facebook)">
+                      <span class="brand-icon facebook">f</span>{{ item.facebook || 'Sin Facebook' }}
+                    </button>
+                    <p><span>Correo electronico:</span> {{ item.email }}</p>
+                    <p><span>Direccion postal:</span> {{ item.direccionPostal || 'Sin direccion' }}</p>
+                    <div class="appointment-card">
+                      <mat-icon>event</mat-icon>
+                      <div>
+                        <span>Cita para visita</span>
+                        <strong>{{ fechaCitaLegible(item.fechaCita) }}</strong>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="detail-section">
+                    <h3>Archivos</h3>
+                    <label class="file-upload">
+                      <mat-icon>upload_file</mat-icon>
+                      Subir archivo
+                      <input type="file" accept="application/pdf,image/*,video/*" (change)="subirArchivo(item, $event)">
+                    </label>
+                    <div class="file-list" *ngIf="item.archivos?.length; else noFiles">
+                      <div class="file-item" *ngFor="let archivo of item.archivos">
+                        <button class="file-open" type="button" (click)="abrirArchivo(archivo.id, archivo.nombreOriginal)">
+                          <mat-icon>attach_file</mat-icon>
+                          {{ archivo.nombreOriginal }}
+                        </button>
+                        <button mat-icon-button type="button" (click)="eliminarArchivo(item, archivo.id)">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                    <ng-template #noFiles><small>No hay archivos cargados.</small></ng-template>
+                  </section>
+
+                  <section class="detail-section">
+                    <h3>Notas</h3>
+                    <div class="note-composer">
+                      <textarea [(ngModel)]="nuevaNotaTexto[item.id!]" placeholder="Nueva nota"></textarea>
+                      <button mat-raised-button class="primary-action" type="button" (click)="agregarNota(item)">
+                        Guardar nota
+                      </button>
+                    </div>
+                    <div class="note-list" *ngIf="item.notas?.length; else noNotes">
+                      <article class="note-item" *ngFor="let nota of item.notas">
+                        <small>{{ formatearFecha(nota.fechaActualizacion || nota.fechaCreacion) }}</small>
+                        <p *ngIf="!notaEnEdicion[nota.id!]">{{ nota.texto }}</p>
+                        <textarea *ngIf="notaEnEdicion[nota.id!]" [(ngModel)]="notaEnEdicion[nota.id!]"></textarea>
+                        <div class="note-actions">
+                          <button mat-button type="button" *ngIf="!notaEnEdicion[nota.id!]" (click)="iniciarEdicionNota(nota)">Editar</button>
+                          <button mat-button type="button" *ngIf="notaEnEdicion[nota.id!]" (click)="guardarNota(item, nota)">Guardar</button>
+                          <button mat-button type="button" (click)="eliminarNota(item, nota)">Eliminar</button>
+                        </div>
+                      </article>
+                    </div>
+                    <ng-template #noNotes><small>No hay notas registradas.</small></ng-template>
+                  </section>
+
+                  <section class="detail-section consent-section">
+                    <h3>Tratamiento de datos</h3>
+                    <span class="consent-pill" [class.allowed]="item.autorizaTratamientoDatos">
+                      {{ item.autorizaTratamientoDatos ? 'Autoriza' : 'Pendiente' }}
+                    </span>
+                  </section>
+                </div>
+              </ng-container>
+
+              <ng-template #editTemplate>
+                <div class="inline-editor" *ngIf="editingResource">
+                  <div class="editor-toolbar">
+                    <h3>Editar registro</h3>
+                    <div>
+                      <button mat-button type="button" (click)="cancelarEdicion()">Cancelar</button>
+                      <button mat-raised-button class="primary-action" type="button" (click)="guardarEdicion()">Guardar</button>
+                    </div>
+                  </div>
+
+                  <div class="form-grid">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Nombre</mat-label>
+                      <input matInput [(ngModel)]="editingResource.nombre">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Apellido</mat-label>
+                      <input matInput [(ngModel)]="editingResource.apellido">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Tipo cedula</mat-label>
+                      <mat-select [(ngModel)]="editingResource.tipoCedula">
+                        <mat-option value="V-">V-</mat-option>
+                        <mat-option value="E-">E-</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Cedula</mat-label>
+                      <input matInput [(ngModel)]="editingResource.cedula">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>RIF</mat-label>
+                      <input matInput [(ngModel)]="editingResource.rif">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>WhatsApp</mat-label>
+                      <input matInput [(ngModel)]="editingResource.whatsapp">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Instagram</mat-label>
+                      <input matInput [(ngModel)]="editingResource.instagram">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Facebook</mat-label>
+                      <input matInput [(ngModel)]="editingResource.facebook">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>TikTok</mat-label>
+                      <input matInput [(ngModel)]="editingResource.tiktok">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Estado comercial</mat-label>
+                      <mat-select [(ngModel)]="editingResource.estadoCliente">
+                        <mat-option value="NO_COMPRO">No compro</mat-option>
+                        <mat-option value="CITA">Esta en cita</mat-option>
+                        <mat-option value="COMPRO">Si compro</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Agente vendedor</mat-label>
+                      <input matInput [(ngModel)]="editingResource.agenteVendedor">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Cita programada</mat-label>
+                      <input matInput type="date" [(ngModel)]="editingResource.fechaCita">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Interesado</mat-label>
+                      <input matInput [(ngModel)]="editingResource.interesado" placeholder="Casa ID 45833">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Correo electronico</mat-label>
+                      <input matInput [(ngModel)]="editingResource.email">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="full-row">
+                      <mat-label>Direccion postal</mat-label>
+                      <input matInput [(ngModel)]="editingResource.direccionPostal">
+                    </mat-form-field>
+                    <mat-checkbox [(ngModel)]="editingResource.autorizaTratamientoDatos" class="full-row">
+                      Autoriza tratamiento de datos
+                    </mat-checkbox>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <mat-card class="editor-panel">
+        <mat-card-header>
+          <mat-card-title>Nuevo registro</mat-card-title>
+          <mat-card-subtitle>Datos iniciales de persona</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="form-grid single">
+            <mat-form-field appearance="outline">
+              <mat-label>Nombre</mat-label>
+              <input matInput [(ngModel)]="currentResource.nombre">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Apellido</mat-label>
+              <input matInput [(ngModel)]="currentResource.apellido">
+            </mat-form-field>
+            <div class="cedula-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Tipo</mat-label>
+                <mat-select [(ngModel)]="currentResource.tipoCedula">
+                  <mat-option value="V-">V-</mat-option>
+                  <mat-option value="E-">E-</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Cedula</mat-label>
+                <input matInput [(ngModel)]="currentResource.cedula">
+              </mat-form-field>
+            </div>
+            <mat-form-field appearance="outline">
+              <mat-label>RIF</mat-label>
+              <input matInput [(ngModel)]="currentResource.rif">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>WhatsApp</mat-label>
+              <input matInput [(ngModel)]="currentResource.whatsapp">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Correo electronico</mat-label>
+              <input matInput [(ngModel)]="currentResource.email">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Instagram</mat-label>
+              <input matInput [(ngModel)]="currentResource.instagram">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Facebook</mat-label>
+              <input matInput [(ngModel)]="currentResource.facebook">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>TikTok</mat-label>
+              <input matInput [(ngModel)]="currentResource.tiktok">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Estado comercial</mat-label>
+              <mat-select [(ngModel)]="currentResource.estadoCliente">
+                <mat-option value="NO_COMPRO">No compro</mat-option>
+                <mat-option value="CITA">Esta en cita</mat-option>
+                <mat-option value="COMPRO">Si compro</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Agente vendedor</mat-label>
+              <input matInput [(ngModel)]="currentResource.agenteVendedor">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Cita programada</mat-label>
+              <input matInput type="date" [(ngModel)]="currentResource.fechaCita">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Interesado</mat-label>
+              <input matInput [(ngModel)]="currentResource.interesado" placeholder="Casa ID 45833">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Direccion postal</mat-label>
+              <input matInput [(ngModel)]="currentResource.direccionPostal">
+            </mat-form-field>
+            <mat-checkbox [(ngModel)]="currentResource.autorizaTratamientoDatos">
+              Autoriza tratamiento de datos
+            </mat-checkbox>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+          <button mat-raised-button class="primary-action" (click)="guardarNuevo()">
+            <mat-icon>add</mat-icon>
+            Guardar
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </section>
+  </main>
+
+  <div class="visits-overlay" *ngIf="visitasAbiertas">
+    <section class="visits-panel">
+      <header class="visits-header">
+        <div>
+          <p class="eyebrow">Agenda comercial</p>
+          <h2>Visitas programadas</h2>
+        </div>
+        <button mat-icon-button type="button" (click)="cerrarVisitas()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <div class="visits-tools">
+        <mat-form-field appearance="outline">
+          <mat-label>Buscar por fecha</mat-label>
+          <input matInput type="date" [(ngModel)]="filtroFechaVisitas">
+        </mat-form-field>
+        <button mat-button type="button" (click)="filtroFechaVisitas = ''">Limpiar</button>
+      </div>
+
+      <div class="performance-card">
+        <div>
+          <span>Rendimiento</span>
+          <strong>{{ rendimientoVisitas() }}</strong>
+        </div>
+        <div class="performance-bar">
+          <span [style.width.%]="rendimientoPorcentaje()"></span>
+        </div>
+        <div class="performance-stats">
+          <small>No compro: {{ visitasPorEstado('NO_COMPRO') }}</small>
+          <small>Cita: {{ visitasPorEstado('CITA') }}</small>
+          <small>Compro: {{ visitasPorEstado('COMPRO') }}</small>
+        </div>
+      </div>
+
+      <div class="visit-list">
+        <article class="visit-item" *ngFor="let visita of visitasFiltradas()">
+          <span class="status-dot" [ngClass]="estadoClase(visita)"></span>
+          <div>
+            <strong>{{ visita.nombre }} {{ visita.apellido }}</strong>
+            <small>{{ fechaCitaLegible(visita.fechaCita) }} - {{ visita.interesado || 'Sin interes registrado' }}</small>
+            <small>{{ visita.agenteVendedor || 'Sin agente asignado' }}</small>
+          </div>
+          <a [href]="whatsappUrl(visita.whatsapp)" target="_blank" rel="noopener noreferrer">
+            <span class="brand-icon whatsapp">W</span>
+          </a>
+        </article>
+        <p class="empty-state" *ngIf="visitasFiltradas().length === 0">No hay citas para esa fecha.</p>
+      </div>
+    </section>
   </div>
 </div>

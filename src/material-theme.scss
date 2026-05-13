@@ -1,0 +1,39 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$my-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$cyan-palette,
+    tertiary: mat.$green-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, sans-serif',
+    plain-family: 'Roboto, sans-serif',
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+@include mat.all-component-themes($my-theme);
+
+:root {
+  --app-background: #f5f7f8;
+  --surface-background: #ffffff;
+  --surface-subtle: #eef3f4;
+  --surface-elevated: #ffffff;
+  --primary-color: #0f6f73;
+  --primary-strong: #0b4f52;
+  --accent-color: #2f7d57;
+  --warning-color: #b7791f;
+  --danger-color: #b42318;
+  --success-color: #1f7a4d;
+  --text-primary: #172326;
+  --text-secondary: #607174;
+  --text-muted: #87989b;
+  --border-color: #dce5e7;
+  --hover-overlay: rgba(15, 111, 115, 0.07);
+  --shadow-soft: 0 14px 35px rgba(20, 43, 47, 0.08);
+}

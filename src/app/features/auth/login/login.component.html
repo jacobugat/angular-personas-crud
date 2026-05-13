@@ -1,20 +1,44 @@
-<div class="login-container">
-  <h2>Iniciar Sesión</h2>
+<div class="login-wrapper">
+  <mat-card class="login-card mat-elevation-z8">
+    <mat-card-header>
+      <div class="login-mark">GI</div>
+      <mat-card-title>Gestion Inmobiliaria</mat-card-title>
+      <mat-card-subtitle>Acceso al panel operativo</mat-card-subtitle>
+    </mat-card-header>
 
-  <!-- PASO 1: USUARIO -->
-  <div *ngIf="pasoActual === 1" class="form-group">
-    <label>Usuario</label>
-    <input type="text" [(ngModel)]="username" placeholder="Escribe tu usuario" class="form-control">
-    <button (click)="irAPassword()" class="btn-next">Siguiente</button>
-  </div>
+    <mat-card-content class="mt-3">
+      <div *ngIf="pasoActual === 1" class="step-container">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Usuario</mat-label>
+          <input matInput type="text" [(ngModel)]="username" placeholder="Escribe tu usuario">
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
 
-  <!-- PASO 2: CONTRASEÑA -->
-  <div *ngIf="pasoActual === 2" class="form-group">
-    <p>Hola, <b>{{username}}</b></p>
-    <label>Contraseña</label>
-    <input type="password" [(ngModel)]="password" placeholder="Tu clave" class="form-control">
-    <button (click)="ejecutarLogin()" class="btn-next">Ingresar</button>
-  </div>
+        <button mat-raised-button class="primary-login full-width mt-2" (click)="irAPassword()">
+          Siguiente
+        </button>
+      </div>
 
-  <p *ngIf="mensajeError" style="color: red; margin-top: 10px;">{{mensajeError}}</p>
+      <div *ngIf="pasoActual === 2" class="step-container">
+        <p class="welcome-text">Hola, <b>{{username}}</b></p>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contrasena</mat-label>
+          <input matInput type="password" [(ngModel)]="password" placeholder="Tu clave">
+          <mat-icon matSuffix>lock</mat-icon>
+        </mat-form-field>
+
+        <div class="d-flex gap-2">
+          <button mat-button (click)="pasoActual = 1">Atras</button>
+          <button mat-raised-button class="primary-login flex-grow-1" (click)="ejecutarLogin()">
+            Ingresar
+          </button>
+        </div>
+      </div>
+
+      <mat-error *ngIf="mensajeError" class="mt-3 text-center">
+        {{mensajeError}}
+      </mat-error>
+    </mat-card-content>
+  </mat-card>
 </div>

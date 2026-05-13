@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
-// Interfaz definida aquí mismo para evitar errores de importación
 export interface AuthResponse {
   token: string;
   username: string;
   status: string;
   message?: string;
+  qrUrl?: string;
 }
 
 @Injectable({
@@ -16,36 +17,60 @@ export interface AuthResponse {
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(creds: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, creds).pipe(
       tap((res: AuthResponse) => {
-        console.log("Respuesta completa del servidor:", res);
-        
-        // Verificamos si existe el token en la respuesta
-        if (res && res.token) {
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('username', res.username);
-          console.log("¡TOKEN GUARDADO EXITOSAMENTE EN LOCALSTORAGE!");
-        } else {
-          console.error("EL SERVIDOR NO ENVIÓ TOKEN. Revisa el backend.");
+        // Solo guardamos sesión si el status es SUCCESS (sin MFA)
+        if (res && res.token && res.status === 'SUCCESS') {
+          this.guardarSesion(res.token, res.username);
         }
       })
     );
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('token');
+  // NUEVO: Obtener configuración de MFA (QR y Secreto)
+  getMfaSetup(username: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mfa/setup?username=${username}`);
   }
 
-  isLoggedIn(): boolean {
-    return !!this.getToken();
+  // NUEVO: Verificar el código de 6 dígitos que pone el usuario
+  verifyMfa(username: string, code: number): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/mfa/verify`, { username, code }).pipe(
+      tap((res: AuthResponse) => {
+        if (res && res.token && res.status === 'SUCCESS') {
+          this.guardarSesion(res.token, res.username);
+        }
+      })
+    );
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    console.log('Sesión cerrada.');
+    this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
+      next: () => this.limpiarSesionLocal(),
+      error: (err) => {
+        console.error("Error en servidor al cerrar sesión", err);
+        this.limpiarSesionLocal();
+      }
+    });
+  }
+
+  private guardarSesion(token: string, username: string): void {
+    localStorage.setItem('token', token);
+    localStorage.setItem('username', username);
+  }
+
+  private limpiarSesionLocal(): void {
+    localStorage.clear();
+    this.router.navigate(['/login']);
+  }
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  getUsername(): string | null {
+    return localStorage.getItem('username');
   }
 }
