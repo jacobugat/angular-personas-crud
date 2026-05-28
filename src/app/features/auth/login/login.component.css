@@ -1,8 +1,6 @@
 .login-wrapper {
   align-items: center;
-  background:
-    linear-gradient(rgba(245, 247, 248, 0.88), rgba(245, 247, 248, 0.94)),
-    linear-gradient(135deg, #d7eee7 0%, #f5f7f8 45%, #ffffff 100%);
+  background: #102f33;
   display: flex;
   justify-content: center;
   min-height: 100vh;

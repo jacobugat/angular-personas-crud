@@ -1,0 +1,127 @@
+.module-page {
+  padding: 1.5rem;
+}
+
+.module-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.eyebrow {
+  color: var(--primary-color);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin: 0;
+}
+
+.module-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(320px, 520px) minmax(0, 1fr);
+}
+
+mat-card {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+mat-card-title {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.45rem;
+}
+
+.role-switch {
+  background: #eef7f6;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 1rem;
+  padding: 0.25rem;
+}
+
+.role-switch button.active {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+.full-row {
+  grid-column: 1 / -1;
+}
+
+.primary-action {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.error-box {
+  background: #fdecec;
+  border: 1px solid #f3b6b6;
+  border-radius: 8px;
+  color: #b42318;
+  margin: 0.5rem 0 0;
+  padding: 0.75rem;
+}
+
+.employee-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.employee-row {
+  align-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 44px minmax(0, 1fr) minmax(120px, 160px) minmax(120px, 160px);
+  padding: 0.75rem;
+}
+
+.avatar {
+  align-items: center;
+  background: #d9f0ed;
+  border-radius: 8px;
+  color: var(--primary-strong);
+  display: flex;
+  font-weight: 800;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+
+.employee-row strong,
+.employee-row span,
+.metric small {
+  display: block;
+}
+
+.employee-row span,
+.metric small,
+.empty-state {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 980px) {
+  .module-grid,
+  .form-grid,
+  .employee-row {
+    grid-template-columns: 1fr;
+  }
+}

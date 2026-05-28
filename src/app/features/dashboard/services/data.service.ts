@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PersonaArchivo, PersonaNota, Resource } from '../models/resource.model';
+import { ClienteArchivo, ClienteNota, Resource } from '../models/resource.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-  private readonly apiUrl = 'http://localhost:8080/api/personas';
+  private readonly apiUrl = 'http://localhost:8080/api/clientes';
 
   constructor(private http: HttpClient) { }
 
@@ -27,26 +27,26 @@ export class DataService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  createNote(personaId: number, texto: string): Observable<PersonaNota> {
-    return this.http.post<PersonaNota>(`${this.apiUrl}/${personaId}/notas`, { texto });
+  createNote(clienteId: number, texto: string): Observable<ClienteNota> {
+    return this.http.post<ClienteNota>(`${this.apiUrl}/${clienteId}/notas`, { texto });
   }
 
-  updateNote(personaId: number, notaId: number, texto: string): Observable<PersonaNota> {
-    return this.http.put<PersonaNota>(`${this.apiUrl}/${personaId}/notas/${notaId}`, { texto });
+  updateNote(clienteId: number, notaId: number, texto: string): Observable<ClienteNota> {
+    return this.http.put<ClienteNota>(`${this.apiUrl}/${clienteId}/notas/${notaId}`, { texto });
   }
 
-  deleteNote(personaId: number, notaId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${personaId}/notas/${notaId}`);
+  deleteNote(clienteId: number, notaId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${clienteId}/notas/${notaId}`);
   }
 
-  uploadFile(personaId: number, archivo: File): Observable<PersonaArchivo> {
+  uploadFile(clienteId: number, archivo: File): Observable<ClienteArchivo> {
     const formData = new FormData();
     formData.append('archivo', archivo);
-    return this.http.post<PersonaArchivo>(`${this.apiUrl}/${personaId}/archivos`, formData);
+    return this.http.post<ClienteArchivo>(`${this.apiUrl}/${clienteId}/archivos`, formData);
   }
 
-  deleteFile(personaId: number, archivoId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${personaId}/archivos/${archivoId}`);
+  deleteFile(clienteId: number, archivoId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${clienteId}/archivos/${archivoId}`);
   }
 
   getFileUrl(archivoId: number): string {

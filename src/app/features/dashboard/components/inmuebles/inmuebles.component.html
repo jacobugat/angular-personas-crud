@@ -1,0 +1,251 @@
+<section class="module-page">
+  <div class="module-header">
+    <div>
+      <p class="eyebrow">Inventario inmobiliario</p>
+      <h2>Propiedades</h2>
+    </div>
+  </div>
+
+  <div class="module-grid">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>home_work</mat-icon>
+          Registrar inmueble
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="type-grid">
+          <button
+            mat-button
+            type="button"
+            *ngFor="let tipo of tipos"
+            [class.active]="nuevo.tipoInmueble === tipo.value"
+            (click)="cambiarTipo(tipo.value)">
+            {{ tipo.label }}
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-row">
+            <mat-label>Titulo</mat-label>
+            <input matInput [(ngModel)]="nuevo.titulo" placeholder="Espectacular Casa en Cedritos">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Venta o arriendo</mat-label>
+            <mat-select [(ngModel)]="nuevo.tipoOperacion">
+              <mat-option value="VENTA">Venta</mat-option>
+              <mat-option value="ARRIENDO">Arriendo</mat-option>
+              <mat-option value="AMBOS">Ambos</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Precio USD</mat-label>
+            <input matInput type="number" [(ngModel)]="nuevo.precio">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-row">
+            <mat-label>Direccion</mat-label>
+            <input matInput [(ngModel)]="nuevo.direccion">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Barrio</mat-label>
+            <input matInput [(ngModel)]="nuevo.barrio">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Ciudad</mat-label>
+            <input matInput [(ngModel)]="nuevo.ciudad">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Area total m2</mat-label>
+            <input matInput type="number" [(ngModel)]="nuevo.areaTotal">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-select [(ngModel)]="nuevo.estadoInmueble">
+              <mat-option value="NUEVO">Nuevo</mat-option>
+              <mat-option value="USADO">Usado</mat-option>
+              <mat-option value="EN_REMODELACION">En remodelacion</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-row">
+            <mat-label>Descripcion</mat-label>
+            <textarea matInput rows="4" [(ngModel)]="nuevo.descripcion"></textarea>
+          </mat-form-field>
+
+          <div class="checks full-row">
+            <mat-checkbox [(ngModel)]="nuevo.plantaElectrica">Planta electrica</mat-checkbox>
+            <mat-checkbox [(ngModel)]="nuevo.panelesSolares">Paneles solares</mat-checkbox>
+            <mat-checkbox [(ngModel)]="nuevo.tanquesAgua">Tanques de agua</mat-checkbox>
+          </div>
+        </div>
+
+        <section class="specific-section" *ngIf="esResidencial()">
+          <h3>Residencial</h3>
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Habitaciones</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.habitaciones">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Banos</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.banos">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Puestos de estacionamiento</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.puestosEstacionamiento">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Piso / niveles</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.pisoNiveles">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Valor de administracion</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.valorAdministracion">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-row">
+              <mat-label>Amenidades</mat-label>
+              <input matInput [(ngModel)]="nuevo.amenidades" placeholder="Balcon, vigilancia 24/7, conjunto cerrado">
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section class="specific-section" *ngIf="esComercial()">
+          <h3>Comercial</h3>
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Metros de vitrina</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.metrosVitrina">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo de energia</mat-label>
+              <mat-select [(ngModel)]="nuevo.tipoEnergia">
+                <mat-option value="Monofasica">Monofasica</mat-option>
+                <mat-option value="Trifasica">Trifasica</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Banos publicos</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.banosPublicos">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Banos privados</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.banosPrivados">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Capacidad de carga</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.capacidadCarga">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Uso de suelo</mat-label>
+              <input matInput [(ngModel)]="nuevo.usoSuelo" placeholder="Comercial, gastronomico, servicios">
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section class="specific-section" *ngIf="esRural()">
+          <h3>Rural / Desarrollo</h3>
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Hectareas</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.hectareas">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Fanegadas</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.fanegadas">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Fuentes de agua</mat-label>
+              <input matInput [(ngModel)]="nuevo.fuentesAgua" placeholder="Pozo, quebrada, acueducto">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Topografia</mat-label>
+              <input matInput [(ngModel)]="nuevo.topografia" placeholder="Plano, inclinado, ondulado">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo de cultivo o uso</mat-label>
+              <input matInput [(ngModel)]="nuevo.tipoCultivoUso">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Distancia a via principal km</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.distanciaViaPrincipalKm">
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section class="specific-section" *ngIf="esEdificio()">
+          <h3>Inversion</h3>
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Numero de unidades</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.numeroUnidades">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Area construida</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.areaConstruida">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Ano de construccion</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.anoConstruccion">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Rentabilidad estimada mensual</mat-label>
+              <input matInput type="number" [(ngModel)]="nuevo.rentabilidadEstimadaMensual">
+            </mat-form-field>
+          </div>
+        </section>
+
+        <p class="error-box" *ngIf="error">{{ error }}</p>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-raised-button class="primary-action" type="button" [disabled]="guardando" (click)="guardar()">
+          <mat-icon>save</mat-icon>
+          Guardar inmueble
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>inventory_2</mat-icon>
+          Inventario registrado
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="property-list" *ngIf="inmuebles.length; else sinInmuebles">
+          <article class="property-row" *ngFor="let inmueble of inmuebles">
+            <div>
+              <strong>{{ inmueble.titulo }}</strong>
+              <span>{{ etiquetaTipo(inmueble.tipoInmueble) }} · {{ inmueble.tipoOperacion }}</span>
+            </div>
+            <div class="metric">
+              <small>Precio</small>
+              <span>{{ inmueble.precio || 0 | currency:'USD':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="metric">
+              <small>Ubicacion</small>
+              <span>{{ inmueble.ciudad || 'Sin ciudad' }}</span>
+            </div>
+            <div class="metric">
+              <small>Area</small>
+              <span>{{ inmueble.areaTotal || 0 }} m2</span>
+            </div>
+          </article>
+        </div>
+        <ng-template #sinInmuebles>
+          <p class="empty-state">Aun no hay inmuebles registrados.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>

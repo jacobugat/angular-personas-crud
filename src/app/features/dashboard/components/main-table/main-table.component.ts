@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../../services/data.service';
-import { PersonaNota, Resource } from '../../models/resource.model';
-import { AuthService } from '../../../../core/services/auth.service';
+import { ClienteNota, Resource } from '../../models/resource.model';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -33,74 +32,50 @@ import { MatSelectModule } from '@angular/material/select';
 export class MainTableComponent implements OnInit {
   resources: Resource[] = [];
   resourcesFiltrados: Resource[] = [];
-  currentResource: Resource = this.crearResourceVacio();
+  
   expandedId?: number;
   editingId?: number;
   editingResource: Resource | null = null;
+  
   nuevaNotaTexto: Record<number, string> = {};
   notaEnEdicion: Record<number, string> = {};
-  visitasAbiertas: boolean = false;
-  filtroFechaVisitas: string = '';
 
   constructor(
-    private dataService: DataService,
-    private authService: AuthService
+    private dataService: DataService
   ) {}
 
   ngOnInit() {
     this.listar();
   }
 
-  cerrarSesion() {
-    if (confirm('Deseas cerrar sesion?')) {
-      this.authService.logout();
-    }
-  }
-
-  abrirVisitas() {
-    this.visitasAbiertas = true;
-  }
-
-  cerrarVisitas() {
-    this.visitasAbiertas = false;
-  }
-
   listar() {
     this.dataService.getRecords().subscribe({
       next: (data) => {
-        this.resources = data.map(item => this.normalizarPersona(item));
+        this.resources = data.map(item => this.normalizarCliente(item));
         this.resourcesFiltrados = this.resources;
       },
       error: (err) => console.error('Error al cargar:', err)
     });
   }
 
-  guardarNuevo() {
-    this.dataService.createRecord(this.currentResource).subscribe({
-      next: () => {
-        this.currentResource = this.crearResourceVacio();
-        this.listar();
-      },
-      error: (err) => console.error(err)
-    });
-  }
+  // --- Lógica de Vista y Edición ---
 
   toggleDetalle(item: Resource) {
-    if (!item.id) {
-      return;
-    }
+    if (!item.id) return;
     this.expandedId = this.expandedId === item.id ? undefined : item.id;
     this.editingId = undefined;
     this.editingResource = null;
   }
 
   iniciarEdicion(item: Resource) {
-    if (!item.id) {
-      return;
-    }
+    if (!item.id) return;
     this.expandedId = item.id;
     this.editingId = item.id;
-    this.editingResource = { ...item, notas: [...(item.notas || [])], archivos: [...(item.archivos || [])] };
+    this.editingResource = { 
+      ...item, 
+      notas: [...(item.notas || [])], 
+      archivos: [...(item.archivos || [])] 
+    };
   }
 
   cancelarEdicion() {
@@ -109,9 +84,7 @@ export class MainTableComponent implements OnInit {
   }
 
   guardarEdicion() {
-    if (!this.editingResource?.id) {
-      return;
-    }
+    if (!this.editingResource?.id) return;
     this.dataService.updateRecord(this.editingResource).subscribe({
       next: () => {
         this.cancelarEdicion();
@@ -122,7 +95,7 @@ export class MainTableComponent implements OnInit {
   }
 
   eliminar(id?: number) {
-    if (id && confirm('Eliminar este registro?')) {
+    if (id && confirm('¿Eliminar este registro?')) {
       this.dataService.deleteRecord(id).subscribe({
         next: () => this.listar()
       });
@@ -134,37 +107,29 @@ export class MainTableComponent implements OnInit {
     this.resourcesFiltrados = this.resources.filter(r => this.valorBuscable(r).includes(valor));
   }
 
-  agregarNota(persona: Resource) {
-    if (!persona.id) {
-      return;
-    }
-    const texto = (this.nuevaNotaTexto[persona.id] || '').trim();
-    if (!texto) {
-      return;
-    }
-    this.dataService.createNote(persona.id, texto).subscribe({
+  // --- Gestión de Notas ---
+
+  agregarNota(cliente: Resource) {
+    if (!cliente.id) return;
+    const texto = (this.nuevaNotaTexto[cliente.id] || '').trim();
+    if (!texto) return;
+    this.dataService.createNote(cliente.id, texto).subscribe({
       next: () => {
-        this.nuevaNotaTexto[persona.id!] = '';
+        this.nuevaNotaTexto[cliente.id!] = '';
         this.listar();
       }
     });
   }
 
-  iniciarEdicionNota(nota: PersonaNota) {
-    if (nota.id) {
-      this.notaEnEdicion[nota.id] = nota.texto;
-    }
+  iniciarEdicionNota(nota: ClienteNota) {
+    if (nota.id) this.notaEnEdicion[nota.id] = nota.texto;
   }
 
-  guardarNota(persona: Resource, nota: PersonaNota) {
-    if (!persona.id || !nota.id) {
-      return;
-    }
+  guardarNota(cliente: Resource, nota: ClienteNota) {
+    if (!cliente.id || !nota.id) return;
     const texto = (this.notaEnEdicion[nota.id] || '').trim();
-    if (!texto) {
-      return;
-    }
-    this.dataService.updateNote(persona.id, nota.id, texto).subscribe({
+    if (!texto) return;
+    this.dataService.updateNote(cliente.id, nota.id, texto).subscribe({
       next: () => {
         delete this.notaEnEdicion[nota.id!];
         this.listar();
@@ -172,41 +137,70 @@ export class MainTableComponent implements OnInit {
     });
   }
 
-  eliminarNota(persona: Resource, nota: PersonaNota) {
-    if (persona.id && nota.id && confirm('Eliminar esta nota?')) {
-      this.dataService.deleteNote(persona.id, nota.id).subscribe({
+  eliminarNota(cliente: Resource, nota: ClienteNota) {
+    if (cliente.id && nota.id && confirm('¿Eliminar esta nota?')) {
+      this.dataService.deleteNote(cliente.id, nota.id).subscribe({
         next: () => this.listar()
       });
     }
   }
 
-  subirArchivo(persona: Resource, event: Event) {
+  // --- Gestión de Archivos ---
+
+  subirArchivo(cliente: Resource, event: Event) {
     const input = event.target as HTMLInputElement;
     const archivo = input.files?.[0];
-    if (!persona.id || !archivo) {
+    if (!cliente.id || !archivo) return;
+
+    const mensaje = this.validarArchivoPermitido(archivo);
+    if (mensaje) {
+      alert(mensaje);
+      input.value = '';
       return;
     }
-    this.dataService.uploadFile(persona.id, archivo).subscribe({
+
+    this.dataService.uploadFile(cliente.id, archivo).subscribe({
       next: () => {
         input.value = '';
         this.listar();
       },
-      error: () => alert('Solo se permiten PDF, imagenes o videos.')
+      error: (err) => alert(err?.error?.message || 'Solo se permiten archivos PDF o imagenes.')
     });
   }
 
-  eliminarArchivo(persona: Resource, archivoId?: number) {
-    if (persona.id && archivoId && confirm('Eliminar este archivo?')) {
-      this.dataService.deleteFile(persona.id, archivoId).subscribe({
+  private validarArchivoPermitido(archivo: File): string | null {
+    const extension = archivo.name.toLowerCase().slice(archivo.name.lastIndexOf('.'));
+    const extensionesPermitidas = ['.pdf', '.jpg', '.jpeg', '.png', '.webp', '.gif'];
+
+    if (archivo.type.startsWith('video/')) {
+      return 'No se puede subir videos.';
+    }
+
+    if (archivo.type.startsWith('audio/') || ['.mp3', '.wav', '.ogg', '.m4a'].includes(extension)) {
+      return 'No se puede subir musica o archivos de audio.';
+    }
+
+    if (!extensionesPermitidas.includes(extension)) {
+      return 'Solo se permiten archivos PDF o imagenes.';
+    }
+
+    if (!archivo.type.startsWith('image/') && archivo.type !== 'application/pdf') {
+      return 'Solo se permiten archivos PDF o imagenes.';
+    }
+
+    return null;
+  }
+
+  eliminarArchivo(cliente: Resource, archivoId?: number) {
+    if (cliente.id && archivoId && confirm('¿Eliminar este archivo?')) {
+      this.dataService.deleteFile(cliente.id, archivoId).subscribe({
         next: () => this.listar()
       });
     }
   }
 
   abrirArchivo(archivoId?: number, nombreOriginal?: string) {
-    if (!archivoId) {
-      return;
-    }
+    if (!archivoId) return;
     this.dataService.downloadFile(archivoId).subscribe({
       next: (blob) => {
         const url = URL.createObjectURL(blob);
@@ -221,69 +215,32 @@ export class MainTableComponent implements OnInit {
     });
   }
 
+  // --- Helpers de Formato ---
+
   whatsappUrl(numero?: string): string {
     const limpio = (numero || '').replace(/[^\d]/g, '');
     return limpio ? `https://wa.me/${limpio}` : '#';
   }
 
   estadoClase(item: Resource): string {
-    return `status-${item.estadoCliente || 'NO_COMPRO'}`.toLowerCase().replace('_', '-');
+    return `status-${this.estadoVisible(item)}`.toLowerCase().replace('_', '-');
+  }
+
+  estadoVisible(item: Resource): 'NO_COMPRO' | 'CITA' | 'COMPRO' {
+    if (this.editingId === item.id && this.editingResource?.estadoCliente) {
+      return this.editingResource.estadoCliente;
+    }
+
+    return item.estadoCliente || 'NO_COMPRO';
   }
 
   estadoTexto(estado?: string): string {
     const etiquetas: Record<string, string> = {
-      NO_COMPRO: 'No compro',
-      CITA: 'Esta en cita',
-      COMPRO: 'Si compro'
+      NO_COMPRO: 'No compró',
+      CITA: 'Está en cita',
+      COMPRO: 'Sí compró'
     };
-    return etiquetas[estado || 'NO_COMPRO'] || 'No compro';
-  }
-
-  fechaCitaLegible(fecha?: string): string {
-    if (!fecha) {
-      return 'Sin cita';
-    }
-    const [year, month, day] = fecha.split('-');
-    return `${day}/${month}/${year}`;
-  }
-
-  visitasFiltradas(): Resource[] {
-    return this.resources.filter(item => {
-      if (!item.fechaCita) {
-        return false;
-      }
-      return this.filtroFechaVisitas ? item.fechaCita === this.filtroFechaVisitas : true;
-    });
-  }
-
-  visitasPorEstado(estado: 'NO_COMPRO' | 'CITA' | 'COMPRO'): number {
-    return this.visitasFiltradas().filter(item => (item.estadoCliente || 'NO_COMPRO') === estado).length;
-  }
-
-  rendimientoVisitas(): string {
-    const total = this.visitasFiltradas().length;
-    if (total === 0) {
-      return 'Pobre';
-    }
-    if (total < 3) {
-      return 'Bajo';
-    }
-    if (total < 6) {
-      return 'Bueno';
-    }
-    return 'Alto';
-  }
-
-  rendimientoPorcentaje(): number {
-    return Math.min(this.visitasFiltradas().length * 18, 100);
-  }
-
-  abrirUrl(url?: string) {
-    if (!url) {
-      return;
-    }
-    const normalizada = /^https?:\/\//i.test(url) ? url : `https://${url}`;
-    window.open(normalizada, '_blank', 'noopener,noreferrer');
+    return etiquetas[estado || 'NO_COMPRO'] || 'No compró';
   }
 
   cedulaCompleta(item: Resource): string {
@@ -298,36 +255,12 @@ export class MainTableComponent implements OnInit {
     return fecha ? new Date(fecha).toLocaleString() : '';
   }
 
-  private crearResourceVacio(): Resource {
+  private normalizarCliente(cliente: Resource): Resource {
     return {
-      nombre: '',
-      apellido: '',
-      tipoCedula: 'V-',
-      cedula: '',
-      rif: '',
-      whatsapp: '',
-      instagram: '',
-      facebook: '',
-      tiktok: '',
-      estadoCliente: 'NO_COMPRO',
-      agenteVendedor: '',
-      fechaCita: '',
-      interesado: '',
-      email: '',
-      direccionPostal: '',
-      autorizaTratamientoDatos: false,
-      notas: [],
-      archivos: []
-    };
-  }
-
-  private normalizarPersona(persona: Resource): Resource {
-    return {
-      ...this.crearResourceVacio(),
-      ...persona,
-      tipoCedula: persona.tipoCedula === 'E-' ? 'E-' : 'V-',
-      notas: persona.notas || [],
-      archivos: persona.archivos || []
+      ...cliente,
+      tipoCedula: cliente.tipoCedula === 'E-' ? 'E-' : 'V-',
+      notas: cliente.notas || [],
+      archivos: cliente.archivos || []
     };
   }
 
@@ -344,10 +277,7 @@ export class MainTableComponent implements OnInit {
       resource.fechaCita,
       resource.interesado,
       resource.email,
-      resource.direccionPostal,
-      resource.facebook,
-      resource.instagram,
-      resource.tiktok
+      resource.direccionPostal
     ].join(' ').toLowerCase();
   }
 }

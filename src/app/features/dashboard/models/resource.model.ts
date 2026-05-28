@@ -1,11 +1,11 @@
-export interface PersonaNota {
+export interface ClienteNota {
   id?: number;
   texto: string;
   fechaCreacion?: string;
   fechaActualizacion?: string;
 }
 
-export interface PersonaArchivo {
+export interface ClienteArchivo {
   id?: number;
   nombreOriginal: string;
   tipoContenido: string;
@@ -21,9 +21,6 @@ export interface Resource {
   cedula: string;
   rif?: string;
   whatsapp?: string;
-  instagram?: string;
-  facebook?: string;
-  tiktok?: string;
   estadoCliente?: 'NO_COMPRO' | 'CITA' | 'COMPRO';
   agenteVendedor?: string;
   fechaCita?: string;
@@ -31,6 +28,6 @@ export interface Resource {
   email: string;
   direccionPostal?: string;
   autorizaTratamientoDatos?: boolean;
-  notas?: PersonaNota[];
-  archivos?: PersonaArchivo[];
+  notas?: ClienteNota[];
+  archivos?: ClienteArchivo[];
 }

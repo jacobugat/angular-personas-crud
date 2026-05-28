@@ -1,0 +1,39 @@
+<aside class="sidebar" [class.collapsed]="!isExpanded">
+  <div class="brand-block">
+    <div class="brand-mark">GI</div>
+    <div *ngIf="isExpanded" class="brand-text">
+      <strong>CRM</strong>
+    </div>
+  </div>
+
+  <nav class="side-nav">
+
+    <button class="nav-item" routerLink="/dashboard/clientes" title="Ver Listado">
+      <mat-icon>groups</mat-icon>
+      <span *ngIf="isExpanded">Clientes</span>
+    </button>
+
+    <button class="nav-item" routerLink="/dashboard/nuevo-registro" title="Registrar Cliente">
+      <mat-icon>person_add</mat-icon>
+      <span *ngIf="isExpanded">Registrar Cliente</span>
+    </button>
+
+
+    
+    <button class="nav-item" routerLink="/dashboard/empleados" title="Empleados">
+      <mat-icon>badge</mat-icon>
+      <span *ngIf="isExpanded">Empleados</span>
+    </button>
+
+    <button class="nav-item" routerLink="/dashboard/inmuebles" title="Propiedades">
+      <mat-icon>home_work</mat-icon>
+      <span *ngIf="isExpanded">Propiedades</span>
+    </button>
+    
+    <button class="nav-item" title="Visitas">
+      <mat-icon>event</mat-icon>
+      <span *ngIf="isExpanded">Visitas</span>
+    </button>
+
+  </nav>
+</aside>

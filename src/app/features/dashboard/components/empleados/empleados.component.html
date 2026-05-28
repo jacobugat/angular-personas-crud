@@ -1,0 +1,120 @@
+<section class="module-page">
+  <div class="module-header">
+    <div>
+      <p class="eyebrow">Equipo comercial</p>
+      <h2>Empleados</h2>
+    </div>
+  </div>
+
+  <div class="module-grid">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>badge</mat-icon>
+          Registrar empleado
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="role-switch">
+          <button
+            mat-button
+            type="button"
+            *ngFor="let rol of roles"
+            [class.active]="nuevo.usuario.role === rol.value"
+            (click)="cambiarRol(rol.value)">
+            {{ rol.label }}
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput [(ngModel)]="nuevo.nombre">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Apellido</mat-label>
+            <input matInput [(ngModel)]="nuevo.apellido">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Telefono</mat-label>
+            <input matInput [(ngModel)]="nuevo.telefono">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha de contratacion</mat-label>
+            <input matInput type="date" [(ngModel)]="nuevo.fechaContratacion">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-row">
+            <mat-label>Direccion</mat-label>
+            <input matInput [(ngModel)]="nuevo.direccion">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Usuario</mat-label>
+            <input matInput [(ngModel)]="nuevo.usuario.username">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Contrasena</mat-label>
+            <input matInput type="password" [(ngModel)]="nuevo.usuario.password">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Meta mensual</mat-label>
+            <input matInput type="number" [(ngModel)]="nuevo.metaVentasMensual">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-row">
+            <mat-label>Notas internas</mat-label>
+            <textarea matInput rows="3" [(ngModel)]="nuevo.notasInternas"></textarea>
+          </mat-form-field>
+        </div>
+
+        <p class="error-box" *ngIf="error">{{ error }}</p>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-raised-button class="primary-action" type="button" [disabled]="guardando" (click)="guardar()">
+          <mat-icon>save</mat-icon>
+          Guardar empleado
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>groups</mat-icon>
+          Equipo registrado
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="employee-list" *ngIf="empleados.length; else sinEmpleados">
+          <article class="employee-row" *ngFor="let empleado of empleados">
+            <div class="avatar">{{ empleado.nombre.charAt(0) }}{{ empleado.apellido.charAt(0) }}</div>
+            <div>
+              <strong>{{ empleado.nombre }} {{ empleado.apellido }}</strong>
+              <span>{{ empleado.usuario.role === 'ADMINISTRADOR' ? 'Administrador' : 'Asesor inmobiliario' }}</span>
+            </div>
+            <div class="metric">
+              <small>Telefono</small>
+              <span>{{ empleado.telefono }}</span>
+            </div>
+            <div class="metric">
+              <small>Meta</small>
+              <span>{{ empleado.metaVentasMensual || 0 | currency:'USD':'symbol':'1.0-0' }}</span>
+            </div>
+          </article>
+        </div>
+        <ng-template #sinEmpleados>
+          <p class="empty-state">Aun no hay empleados registrados.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>

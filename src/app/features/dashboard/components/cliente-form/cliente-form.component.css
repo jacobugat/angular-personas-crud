@@ -1,0 +1,48 @@
+/* 1. Centrar todo el formulario en la pantalla */
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f8fafc; 
+}
+
+/* 2. El bloque del formulario */
+.editor-card {
+  width: 100%;
+  max-width: 700px; /* Ancho máximo para que se vea como un bloque */
+  border-radius: 8px;
+  border: 1px solid #dce2ea;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  background-color: #f4fcfc;
+}
+
+/* 3. El Grid Responsivo */
+.grid-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* ¡Magia responsiva! */
+  gap: 16px;
+  padding-top: 1rem;
+}
+
+/* 4. Elementos que siempre deben ocupar todo el ancho */
+.full-width {
+  grid-column: 1 / -1; 
+}
+
+/* 5. Cédula (Tipo + Número) */
+.cedula-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.tipo-cedula { width: 100px; }
+.num-cedula { flex: 1; }
+
+.terms-section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f1f5f9;
+  border-radius: 8px;
+}

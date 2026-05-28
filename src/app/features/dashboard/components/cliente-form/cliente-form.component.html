@@ -1,0 +1,110 @@
+<div class="form-container">
+  <mat-card class="editor-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>person_add</mat-icon> Registro de Cliente
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="grid-form">
+        
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput [(ngModel)]="currentResource.nombre" name="nombre" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido</mat-label>
+          <input matInput [(ngModel)]="currentResource.apellido" name="apellido" required>
+        </mat-form-field>
+
+        <div class="cedula-group">
+          <mat-form-field appearance="outline" class="tipo-cedula">
+            <mat-select [(ngModel)]="currentResource.tipoCedula">
+              <mat-option value="V-">V-</mat-option>
+              <mat-option value="E-">E-</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="num-cedula">
+            <mat-label>Número de Cédula</mat-label>
+            <input matInput [(ngModel)]="currentResource.cedula" name="cedula">
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>RIF</mat-label>
+          <input matInput [(ngModel)]="currentResource.rif" name="rif">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo Electrónico</mat-label>
+          <input matInput [(ngModel)]="currentResource.email" name="email" type="email" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>WhatsApp</mat-label>
+          <input matInput [(ngModel)]="currentResource.whatsapp" name="whatsapp">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Estado del Cliente</mat-label>
+          <mat-select [(ngModel)]="currentResource.estadoCliente">
+            <mat-option value="NO_COMPRO">No Compró</mat-option>
+            <mat-option value="CITA">Cita</mat-option>
+            <mat-option value="COMPRO">Compró</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Agente Vendedor</mat-label>
+          <input matInput [(ngModel)]="currentResource.agenteVendedor">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Interesado en</mat-label>
+          <input matInput [(ngModel)]="currentResource.interesado" placeholder="Casa ID 45833">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de Cita</mat-label>
+          <input matInput type="date" [(ngModel)]="currentResource.fechaCita">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Dirección Postal</mat-label>
+          <input matInput [(ngModel)]="currentResource.direccionPostal">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nota Inicial</mat-label>
+          <textarea matInput [(ngModel)]="notaInicial" rows="3" placeholder="Escribe detalles importantes..."></textarea>
+        </mat-form-field>
+
+        <div class="full-width file-section">
+          <label class="file-label">
+            <mat-icon>upload_file</mat-icon>
+            Seleccionar archivos
+            <input type="file" multiple accept="application/pdf,image/*" (change)="seleccionarArchivos($event)">
+          </label>
+          <small *ngIf="archivosSeleccionados.length" class="file-info">
+            {{ archivosSeleccionados.length }} archivo(s) listos para subir
+          </small>
+        </div>
+      </div>
+
+      <div class="terms-section">
+        <mat-checkbox [(ngModel)]="currentResource.autorizaTratamientoDatos" color="primary">
+          Autorizo el tratamiento de datos personales
+        </mat-checkbox>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button (click)="cancelar()">Cancelar</button>
+      <button mat-raised-button color="primary" [disabled]="!currentResource.nombre" (click)="guardar()">
+        <mat-icon>save</mat-icon> Guardar Registro
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

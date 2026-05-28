@@ -1,0 +1,142 @@
+.module-page {
+  padding: 1.5rem;
+}
+
+.module-header {
+  margin-bottom: 1.25rem;
+}
+
+.eyebrow {
+  color: var(--primary-color);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+}
+
+h2,
+h3 {
+  margin: 0;
+}
+
+.module-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(360px, 760px) minmax(0, 1fr);
+}
+
+mat-card {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+mat-card-title {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.45rem;
+}
+
+.type-grid {
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-bottom: 1rem;
+}
+
+.type-grid button {
+  background: #eef7f6;
+  border: 1px solid var(--border-color);
+  min-width: 0;
+}
+
+.type-grid button.active {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.full-row {
+  grid-column: 1 / -1;
+}
+
+.checks {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 0.65rem;
+}
+
+.specific-section {
+  border-top: 1px solid var(--border-color);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.specific-section h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.primary-action {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.error-box {
+  background: #fdecec;
+  border: 1px solid #f3b6b6;
+  border-radius: 8px;
+  color: #b42318;
+  margin: 0.75rem 0 0;
+  padding: 0.75rem;
+}
+
+.property-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.property-row {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(110px, 1fr));
+  padding: 0.75rem;
+}
+
+.property-row strong,
+.property-row span,
+.metric small {
+  display: block;
+}
+
+.property-row span,
+.metric small,
+.empty-state {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 1180px) {
+  .module-grid,
+  .property-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .form-grid,
+  .checks,
+  .type-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,43 @@
+export type TipoInmueble = 'CASA' | 'APARTAMENTO' | 'LOCAL' | 'OFICINA' | 'FINCA' | 'TERRENO' | 'EDIFICIO';
+export type TipoOperacion = 'VENTA' | 'ARRIENDO' | 'AMBOS';
+export type EstadoInmueble = 'NUEVO' | 'USADO' | 'EN_REMODELACION';
+
+export interface Inmueble {
+  id?: number;
+  titulo: string;
+  tipoInmueble: TipoInmueble;
+  tipoOperacion: TipoOperacion;
+  precio: number | null;
+  direccion: string;
+  barrio?: string;
+  ciudad?: string;
+  areaTotal: number | null;
+  estadoInmueble?: EstadoInmueble;
+  descripcion?: string;
+  plantaElectrica?: boolean;
+  panelesSolares?: boolean;
+  tanquesAgua?: boolean;
+  habitaciones?: number | null;
+  banos?: number | null;
+  puestosEstacionamiento?: number | null;
+  pisoNiveles?: number | null;
+  valorAdministracion?: number | null;
+  amenidades?: string;
+  metrosVitrina?: number | null;
+  tipoEnergia?: string;
+  banosPublicos?: number | null;
+  banosPrivados?: number | null;
+  capacidadCarga?: number | null;
+  usoSuelo?: string;
+  hectareas?: number | null;
+  fanegadas?: number | null;
+  fuentesAgua?: string;
+  topografia?: string;
+  tipoCultivoUso?: string;
+  distanciaViaPrincipalKm?: number | null;
+  numeroUnidades?: number | null;
+  areaConstruida?: number | null;
+  anoConstruccion?: number | null;
+  rentabilidadEstimadaMensual?: number | null;
+  fechaRegistro?: string;
+}

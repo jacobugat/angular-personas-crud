@@ -1,0 +1,100 @@
+/* 1. Estructura Base del Sidebar */
+.sidebar {
+  background: #102f33;
+  color: #f7fbfb;
+  height: 100vh;
+  width: 264px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  box-sizing: border-box;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+  padding: 1.25rem 0.75rem;
+}
+
+/* 2. Bloque de Marca (Logo y Títulos) */
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.brand-block div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  background: #d7eee7;
+  color: #102f33;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 1.1rem; /* Aumentado de la base */
+  flex-shrink: 0;
+}
+
+.brand-block strong {
+  font-size: 1.75rem; /* Aumentado de 1.50rem */
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.brand-block span {
+  font-size: 0.9rem; /* Aumentado de 0.75rem */
+  color: #94a3b8;
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+/* 3. Navegación */
+.side-nav {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.85rem; /* Aumentado un poco el padding para equilibrar el texto más grande */
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #b7cccf;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.05rem; /* Se agregó tamaño explícito para los ítems del menú */
+  font-weight: 500;
+}
+
+.nav-item mat-icon {
+  font-size: 1.4rem; /* Aumentado el tamaño del icono si usas Material Icons */
+  width: 24px;
+  height: 24px;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item.active {
+  background: rgba(215, 238, 231, 0.1);
+  color: #d7eee7;
+}
+
+/* Ajuste de iconos en modo colapsado */
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 0.75rem 0;
+}

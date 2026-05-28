@@ -1,0 +1,42 @@
+/* 1. Contenedor Principal */
+.topbar-container {
+  background-color: #102f33;
+  color: white;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+/* 2. Estructura de Lados (Izquierda y Derecha) */
+.header-left, 
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* 3. Estilo Único para Botones */
+.menu-trigger, 
+.logout-button {
+  color: #f7fbfb !important;
+  transition: background-color 0.2s ease;
+}
+
+.menu-trigger:hover, 
+.logout-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 4. Lógica de la Flecha y Rotación */
+.menu-trigger mat-icon {
+  /* cubic-bezier hace que el giro se vea más premium */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Esta es la clase que se activa cuando [class.rotated]="!isMenuExpanded" */
+.menu-trigger mat-icon.rotated {
+  transform: rotate(180deg);
+}

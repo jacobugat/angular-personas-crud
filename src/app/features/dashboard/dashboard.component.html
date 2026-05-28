@@ -1,0 +1,15 @@
+<div class="app-shell" [class.sidebar-collapsed]="!isSidebarExpanded">
+  <app-sidebar [isExpanded]="isSidebarExpanded"></app-sidebar>
+
+  <div class="main-content">
+    <app-topbar 
+      (menuToggle)="toggleSidebar()" 
+      (logout)="handleLogout()"
+      [isMenuExpanded]="isSidebarExpanded">
+    </app-topbar>
+    
+    <main class="workspace">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
